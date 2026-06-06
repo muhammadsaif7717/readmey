@@ -9,11 +9,19 @@ Readmey is an advanced, drag-and-drop README.md generator designed to help devel
 ## ✨ Features
 
 - **Drag & Drop Editor**: Intuitively arrange over 70+ markdown blocks.
-- **Live Preview**: See your markdown rendered beautifully in real-time.
-- **Dark/Light Mode**: Premium, fully responsive UI designed for all viewing environments.
-- **Rich Component Library**: Includes pre-configured blocks for Badges, Code Snippets, GitHub Stats, Callouts, and more.
-- **Pre-built Templates**: Jumpstart your documentation with tailored templates for Frontend, Backend, Mobile, and Open Source projects.
-- **Instant Export**: Download your finished `README.md` in one click.
+- **Developer-Focused Elements**: Specialized blocks for Environment Variables, System Architecture diagrams, Code Sandboxes, Deployment instructions, and dynamic Tables of Contents.
+- **Live Preview**: See your markdown rendered beautifully in real-time with an exact GitHub-flavored preview.
+- **Dark/Light Mode**: Premium, fully responsive UI designed for all viewing environments, complete with smooth Framer Motion animations.
+- **Pre-built Templates**: Jumpstart your documentation with tailored templates for:
+  - 🔥 **Fullstack Apps** (Next.js, Node)
+  - 🎨 **Frontend Projects**
+  - ⚙️ **Backend APIs**
+  - 🧠 **Data Science / ML**
+  - 💅 **Design Systems**
+  - 📱 **Mobile Apps**
+  - 🌍 **Open Source Tools**
+- **Instant Export**: Copy your generated raw markdown or download the finished `README.md` file in one click.
+- **Persistent Storage**: Never lose your progress. Your current session is safely auto-saved to LocalStorage.
 
 ## 🚀 Quick Start
 
@@ -31,9 +39,11 @@ Readmey is an advanced, drag-and-drop README.md generator designed to help devel
    ```
 
 3. **Start the development server**
+
    ```bash
    npm run dev
    ```
+
    The application will be running at [http://localhost:3000](http://localhost:3000).
 
 ## 🛠️ Tech Stack
@@ -44,6 +54,13 @@ Readmey is an advanced, drag-and-drop README.md generator designed to help devel
 - **Animations**: [Framer Motion](https://www.framer.com/motion/)
 - **Drag & Drop**: [@dnd-kit](https://dndkit.com/)
 - **Icons**: [Lucide React](https://lucide.dev/)
+
+## 👨‍💻 Author
+
+Built with ❤️ by **Muhammad Saif**
+
+- Portfolio: [developer-saif.vercel.app](https://developer-saif.vercel.app/)
+- GitHub: [@muhammadsaif7717](https://github.com/muhammadsaif7717)
 
 ## 🤝 Contributing
 
