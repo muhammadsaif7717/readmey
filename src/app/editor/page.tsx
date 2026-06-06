@@ -89,7 +89,7 @@ export default function Page() {
           }}
         >
           {/* Panel label */}
-          <div className="flex items-center gap-2 border-b border-slate-200 bg-slate-50 px-4 py-2 dark:border-[#1f1f20] dark:bg-[#0d0d0e]">
+          <div className="flex h-11 shrink-0 items-center gap-2 border-b border-slate-200 bg-slate-50 px-4 py-0 dark:border-[#1f1f20] dark:bg-[#0d0d0e]">
             <FileEdit
               size={12}
               className="text-amber-500 dark:text-[#c8a84b]"
@@ -134,18 +134,6 @@ export default function Page() {
             transition: isDragging ? 'none' : 'width 0.05s ease',
           }}
         >
-          <div className="flex items-center gap-2 border-b border-slate-200 bg-slate-50 px-4 py-2 dark:border-[#1f1f20] dark:bg-[#0d0d0e]">
-            <Eye size={12} className="text-zinc-500 dark:text-[#555558]" />
-            <span
-              className="text-xs tracking-widest text-zinc-600 uppercase dark:text-[#555558]"
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                letterSpacing: '0.12em',
-              }}
-            >
-              Preview
-            </span>
-          </div>
           <Preview />
         </div>
       </div>

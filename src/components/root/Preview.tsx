@@ -89,7 +89,7 @@ export default function Preview() {
   return (
     <div className="flex h-full flex-col overflow-hidden bg-white dark:bg-[#0a0a0b]">
       {/* ── Toolbar ──────────────────────────────────────────────── */}
-      <div className="flex shrink-0 items-center gap-2 border-b border-slate-200 bg-slate-50 px-3 py-2 dark:border-[#1f1f20] dark:bg-[#0d0d0e]">
+      <div className="flex h-11 shrink-0 items-center gap-2 border-b border-slate-200 bg-slate-50 px-3 py-0 dark:border-[#1f1f20] dark:bg-[#0d0d0e]">
         {/* View mode toggle */}
         <div className="flex items-center gap-0.5 rounded-md border border-slate-200 bg-white p-0.5 dark:border-[#2a2a2c] dark:bg-[#111110]">
           {(['preview', 'raw'] as ViewMode[]).map((mode) => {
