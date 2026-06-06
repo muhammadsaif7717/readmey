@@ -91,8 +91,11 @@ function BlockRow({
   return (
     <div
       ref={setNodeRef}
-      style={style}
-      className={`group rounded-lg border transition-all duration-150 ${open ? 'border-slate-300 dark:border-[#2a2a2c]' : 'border-slate-200 dark:border-[#1a1a1b]'} bg-white dark:bg-[#111110]`}
+      style={{
+        ...style,
+        zIndex: isDragging ? 50 : 0,
+      }}
+      className={`group rounded-lg border transition-all duration-150 ${open ? 'border-slate-300 dark:border-[#2a2a2c]' : 'border-slate-200 dark:border-[#1a1a1b]'} bg-white dark:bg-[#111110] ${isDragging ? 'shadow-lg shadow-amber-500/10 border-amber-500/50 dark:border-amber-500/50' : ''}`}
     >
       {/* Row header */}
       <div

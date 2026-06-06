@@ -11,6 +11,22 @@ export default function HomePage() {
   const router = useRouter();
   const { setBlocks } = useReadme();
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 24 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+  };
+
   const handleUseTemplate = (template: Template | null) => {
     if (template === null) {
       setBlocks([]);
@@ -38,33 +54,33 @@ export default function HomePage() {
       {/* Hero */}
       <div className="mx-auto max-w-3xl pt-20 pb-16 text-center">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
         >
           {/* Badge */}
-          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-3.5 py-1.5">
+          <motion.div variants={itemVariants} className="mb-7 inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-3.5 py-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
             <span className="font-mono text-[10px] font-medium tracking-widest text-amber-500">
               pick a template · edit · export
             </span>
-          </div>
+          </motion.div>
 
           {/* Headline */}
-          <h1 className="font-syne mb-5 text-5xl leading-[1.0] font-extrabold tracking-[-2px] text-amber-50 sm:text-6xl lg:text-7xl">
+          <motion.h1 variants={itemVariants} className="font-syne mb-5 text-5xl leading-[1.0] font-extrabold tracking-[-2px] text-zinc-900 dark:text-amber-50 sm:text-6xl lg:text-7xl">
             Your README,{' '}
             <em className="text-amber-400 not-italic">beautifully</em> done.
-          </h1>
+          </motion.h1>
 
           {/* Sub */}
-          <p className="mx-auto mb-10 max-w-md font-mono text-sm leading-relaxed text-zinc-500 dark:text-zinc-600">
+          <motion.p variants={itemVariants} className="mx-auto mb-10 max-w-md font-mono text-sm leading-relaxed text-zinc-500 dark:text-zinc-600">
             {'// select a template below — or start from scratch'}
             <br />
             {'// fill fields, preview live, download in one click.'}
-          </p>
+          </motion.p>
 
           {/* CTAs */}
-          <div className="mb-12 flex items-center justify-center gap-3">
+          <motion.div variants={itemVariants} className="mb-12 flex items-center justify-center gap-3">
             <button
               onClick={() => handleUseTemplate(null)}
               className="font-syne rounded-lg bg-amber-400 px-6 py-2.5 text-sm font-bold text-zinc-950 transition-colors hover:bg-amber-300 active:scale-[0.97]"
@@ -77,14 +93,14 @@ export default function HomePage() {
                   .getElementById('templates')
                   ?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="font-syne rounded-lg border border-black/[0.08] px-6 py-2.5 text-sm font-semibold text-zinc-600 transition-colors hover:border-black/[0.15] hover:text-zinc-900 dark:border-white/[0.08] dark:text-zinc-500 dark:hover:border-white/[0.15] dark:hover:text-zinc-200"
+              className="font-syne rounded-lg border border-black/[0.08] dark:border-white/[0.08] px-6 py-2.5 text-sm font-semibold text-zinc-600 dark:text-zinc-400 transition-colors hover:border-black/[0.15] dark:hover:border-white/[0.15] hover:text-zinc-900 dark:hover:text-zinc-200"
             >
               Browse templates
             </button>
-          </div>
+          </motion.div>
 
           {/* Step trail */}
-          <div className="flex items-center justify-center gap-0">
+          <motion.div variants={itemVariants} className="flex items-center justify-center gap-0">
             {steps.map((step, i) => (
               <React.Fragment key={step}>
                 <div className="flex items-center gap-2 px-3 py-2">
@@ -98,13 +114,11 @@ export default function HomePage() {
                   </span>
                 </div>
                 {i < steps.length - 1 && (
-                  <span className="text-xs text-zinc-400 dark:text-zinc-800">
-                    →
-                  </span>
+                  <span className="text-xs text-zinc-400 dark:text-zinc-800">→</span>
                 )}
               </React.Fragment>
             ))}
-          </div>
+          </motion.div>
         </motion.div>
       </div>
 
@@ -121,15 +135,16 @@ export default function HomePage() {
         {/* Blank card */}
         <motion.button
           initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ delay: 0.08, duration: 0.4 }}
           onClick={() => handleUseTemplate(null)}
-          className="group flex min-h-[200px] cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-black/[0.07] bg-black/5 p-8 text-center transition-all hover:border-amber-500/30 hover:bg-amber-500/[0.03] dark:border-white/[0.07] dark:bg-zinc-900/40"
+          className="group flex min-h-[200px] cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-300 dark:border-white/[0.07] bg-white dark:bg-zinc-900/40 p-8 text-center transition-all hover:border-amber-400 hover:shadow-md dark:hover:border-amber-500/30 dark:hover:bg-amber-500/[0.03] outline-amber-500"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-amber-500/20 bg-amber-500/10 text-xl text-amber-400 transition-transform duration-200 group-hover:scale-110">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-amber-500/20 bg-amber-500/10 text-xl text-amber-500 transition-transform duration-200 group-hover:scale-110">
             +
           </div>
-          <p className="font-syne text-sm font-bold text-amber-50">
+          <p className="font-syne text-sm font-bold text-zinc-900 dark:text-amber-50">
             Blank canvas
           </p>
           <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-600">
@@ -142,10 +157,11 @@ export default function HomePage() {
           <motion.div
             key={template.id}
             initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ delay: 0.1 + index * 0.04, duration: 0.4 }}
             onClick={() => handleUseTemplate(template)}
-            className="group flex cursor-pointer flex-col overflow-hidden rounded-xl border border-white/[0.05] bg-[#111110] transition-all hover:border-amber-500/25"
+            className="group flex cursor-pointer flex-col overflow-hidden rounded-xl border border-slate-200 dark:border-white/[0.05] bg-white dark:bg-[#111110] transition-all hover:shadow-md hover:border-amber-400 dark:hover:border-amber-500/25 outline-amber-500"
           >
             {/* Card body */}
             <div className="flex flex-1 flex-col p-5">
@@ -178,8 +194,8 @@ export default function HomePage() {
             </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-between border-t border-white/[0.04] px-5 py-3">
-              <span className="font-syne flex items-center gap-1.5 text-[11px] font-semibold text-zinc-500 transition-colors group-hover:text-amber-500 dark:text-zinc-600 dark:group-hover:text-amber-400">
+            <div className="flex items-center justify-between border-t border-slate-100 dark:border-white/[0.04] bg-slate-50/50 dark:bg-transparent px-5 py-3">
+              <span className="font-syne flex items-center gap-1.5 text-[11px] font-semibold text-zinc-500 dark:text-zinc-600 transition-colors group-hover:text-amber-600 dark:group-hover:text-amber-400">
                 Use template
                 <ArrowRight
                   size={13}
