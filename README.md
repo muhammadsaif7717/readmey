@@ -21,6 +21,7 @@ Readmey is an advanced, drag-and-drop README.md generator designed to help devel
   - 📱 **Mobile Apps**
   - 🌍 **Open Source Tools**
 - **Instant Export**: Copy your generated raw markdown or download the finished `README.md` file in one click.
+- **Progressive Web App (PWA)**: Install Readmey directly to your device for quick access and an app-like experience.
 - **Persistent Storage**: Never lose your progress. Your current session is safely auto-saved to LocalStorage.
 
 ## 🚀 Quick Start
