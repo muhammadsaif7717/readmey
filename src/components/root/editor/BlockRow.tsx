@@ -4,6 +4,8 @@ import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, ChevronDown, Trash2 } from 'lucide-react';
 import { ReadmeBlock } from '@/types';
 import TableEditor from './TableEditor';
+import BadgeEditor from './BadgeEditor';
+import SocialEditor from './SocialEditor';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -143,22 +145,108 @@ export default function BlockRow({
         <div className="border-t border-slate-200 px-3 pt-3 pb-3 dark:border-[#1a1a1b]">
           {block.type === 'table' ? (
             <TableEditor block={block} onUpdate={onUpdate} />
+          ) : block.type === 'badges' || block.type === 'tech-stack' ? (
+            <BadgeEditor block={block} onUpdate={onUpdate} />
+          ) : block.type === 'social' ? (
+            <SocialEditor block={block} onUpdate={onUpdate} />
           ) : (
-            <textarea
-              className="w-full resize-none rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-zinc-800 transition-colors outline-none focus:border-amber-500/30 focus:ring-1 focus:ring-amber-500/20 dark:border-[#2a2a2c] dark:bg-[#0d0d0e] dark:text-[#c8c8c4] dark:focus:border-[#c8a84b44] dark:focus:ring-[#c8a84b22]"
-              rows={block.type === 'codeBlock' ? 6 : 3}
-              value={(block.content as string) ?? ''}
-              onChange={(e) => onUpdate(block.id, e.target.value)}
-              placeholder={`Enter ${getLabel(block.type).toLowerCase()} content…`}
-              style={{
-                fontFamily:
-                  block.type === 'codeBlock'
+            <div className="flex flex-col gap-1.5">
+              <textarea
+                className="w-full resize-none rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-zinc-800 transition-colors outline-none focus:border-amber-500/30 focus:ring-1 focus:ring-amber-500/20 dark:border-[#2a2a2c] dark:bg-[#0d0d0e] dark:text-[#c8c8c4] dark:focus:border-[#c8a84b44] dark:focus:ring-[#c8a84b22]"
+                rows={
+                  ['code', 'terminal', 'file-tree', 'env-vars'].includes(
+                    block.type
+                  )
+                    ? 6
+                    : 3
+                }
+                value={(block.content as string) ?? ''}
+                onChange={(e) => onUpdate(block.id, e.target.value)}
+                placeholder={
+                  [
+                    'image',
+                    'banner',
+                    'screenshot',
+                    'gif',
+                    'logo',
+                    'architecture',
+                    'video',
+                  ].includes(block.type)
+                    ? 'Paste image/video URL here (e.g. https://...)'
+                    : ['sandbox', 'demo', 'docs'].includes(block.type)
+                      ? 'Paste link URL here (e.g. https://...)'
+                      : [
+                            'stats',
+                            'langs',
+                            'streak',
+                            'trophy',
+                            'views',
+                            'activity',
+                          ].includes(block.type)
+                        ? 'Enter your GitHub username...'
+                        : block.type === 'columns'
+                          ? 'Left content ||| Right content'
+                          : block.type === 'license'
+                            ? 'Enter license type (e.g. MIT, Apache-2.0)'
+                            : block.type === 'version'
+                              ? 'Enter version (e.g. 1.0.0)'
+                              : `Enter ${getLabel(block.type).toLowerCase()} content…`
+                }
+                style={{
+                  fontFamily: [
+                    'code',
+                    'terminal',
+                    'file-tree',
+                    'config',
+                    'api',
+                    'env-vars',
+                  ].includes(block.type)
                     ? "'JetBrains Mono', monospace"
                     : 'inherit',
-                fontSize: block.type === 'codeBlock' ? '12px' : '14px',
-                caretColor: '#c8a84b',
-              }}
-            />
+                  fontSize: [
+                    'code',
+                    'terminal',
+                    'file-tree',
+                    'config',
+                    'api',
+                    'env-vars',
+                  ].includes(block.type)
+                    ? '12px'
+                    : '14px',
+                  caretColor: '#c8a84b',
+                }}
+              />
+              {[
+                'stats',
+                'langs',
+                'streak',
+                'trophy',
+                'views',
+                'activity',
+              ].includes(block.type) && (
+                <p className="text-[10px] text-zinc-500 italic dark:text-[#555558]">
+                  💡 Just enter your GitHub username (e.g. torvalds)
+                </p>
+              )}
+              {[
+                'image',
+                'banner',
+                'screenshot',
+                'gif',
+                'logo',
+                'architecture',
+                'video',
+              ].includes(block.type) && (
+                <p className="text-[10px] text-zinc-500 italic dark:text-[#555558]">
+                  💡 Paste a direct link to the image/media
+                </p>
+              )}
+              {block.type === 'columns' && (
+                <p className="text-[10px] text-zinc-500 italic dark:text-[#555558]">
+                  💡 Use <strong>|||</strong> to separate left and right columns
+                </p>
+              )}
+            </div>
           )}
         </div>
       )}

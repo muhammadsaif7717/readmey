@@ -2,6 +2,45 @@ import { Template } from '@/types';
 
 export const TEMPLATES: Template[] = [
   {
+    id: 'developer-profile',
+    title: 'Developer Profile',
+    description:
+      'Personal GitHub profile README with advanced stats and graphs.',
+    icon: '👨‍💻',
+    blocks: [
+      { type: 'heading', content: 'Hi there 👋, I am [Your Name]' },
+      {
+        type: 'text',
+        content:
+          'A passionate developer from [Your Country] crafting beautiful experiences.',
+      },
+      { type: 'views', content: 'yourusername' },
+      {
+        type: 'social',
+        content: '',
+      },
+      { type: 'heading2', content: '🚀 About Me' },
+      {
+        type: 'list',
+        content:
+          '🔭 I’m currently working on an awesome open-source project\n🌱 I’m currently learning full-stack development\n👨‍💻 All of my projects are available at [my portfolio](https://your-portfolio-link.com)\n📝 I regularly write articles on [my blog](https://your-blog-link.com)\n💬 Ask me about frontend technologies\n📫 How to reach me: **your.email@example.com**\n📄 Know about my experiences [Resume / CV](https://your-resume-link.com)\n⚡ Fun fact: I love coffee and coding',
+      },
+      { type: 'heading2', content: '🛠️ Tech Stack' },
+      {
+        type: 'badges',
+        content: '',
+      },
+      { type: 'heading2', content: '📈 GitHub Stats' },
+      { type: 'stats', content: 'yourusername' },
+      { type: 'langs', content: 'yourusername' },
+      { type: 'streak', content: 'yourusername' },
+      { type: 'heading2', content: '🏆 Trophies' },
+      { type: 'trophy', content: 'yourusername' },
+      { type: 'heading2', content: '📊 Activity Graph' },
+      { type: 'activity', content: 'yourusername' },
+    ],
+  },
+  {
     id: 'frontend',
     title: 'Frontend Project',
     description: 'Perfect for React, Vue, Angular, or any web UI project.',

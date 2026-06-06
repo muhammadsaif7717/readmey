@@ -423,11 +423,11 @@ const elements = [
     icon: <Award size={13} />,
     items: [
       {
-        label: 'Social Badges',
+        label: 'Badges',
         type: 'badges',
         icon: <LinkIcon size={14} />,
-        desc: 'Social links',
-        keywords: 'badges social media links',
+        desc: 'Custom badges',
+        keywords: 'badges links custom shields',
       },
       {
         label: 'Tech Stack',

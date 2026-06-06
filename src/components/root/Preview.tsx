@@ -56,7 +56,7 @@ const mdClass = [
   '[&_th]:bg-slate-50 dark:[&_th]:bg-[#111110] [&_th]:text-left [&_th]:text-xs [&_th]:uppercase',
   '[&_th]:tracking-wider [&_th]:text-amber-600 dark:[&_th]:text-[#c8a84b]',
   '[&_td]:border [&_td]:border-slate-200 dark:[&_td]:border-[#1f1f20] [&_td]:px-3 [&_td]:py-2 [&_td]:text-zinc-600 dark:[&_td]:text-[#aaaaaa]',
-  '[&_img]:rounded-lg [&_img]:max-w-full',
+  '[&_img]:rounded-lg [&_img]:max-w-full [&_img]:inline-block [&_img]:align-middle [&_img]:m-1',
 ].join(' ');
 
 // ─── Preview ──────────────────────────────────────────────────────────────────

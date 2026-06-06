@@ -258,10 +258,26 @@ export function ReadmeProvider({ children }: { children: React.ReactNode }) {
 
           // Badges & Links
           case 'badges':
-          case 'social':
-            return content.split('\n').filter(Boolean).join(' ');
           case 'tech-stack':
-            return `### 🛠️ Tech Stack\n\n${content}`;
+          case 'social':
+            return content
+              .split('\n')
+              .filter(Boolean)
+              .map((line) => {
+                const trimmed = line.trim();
+                if (
+                  trimmed.startsWith('![') ||
+                  trimmed.startsWith('<') ||
+                  trimmed.startsWith('[')
+                ) {
+                  return trimmed;
+                }
+                if (trimmed.startsWith('http')) {
+                  return `![](${trimmed})`;
+                }
+                return trimmed;
+              })
+              .join(' &nbsp; ');
           case 'license':
             return `![License](https://img.shields.io/badge/license-${content}-blue.svg)`;
           case 'build':
@@ -350,7 +366,7 @@ export function ReadmeProvider({ children }: { children: React.ReactNode }) {
             return `## Table of Contents\n\n${content
               .split('\n')
               .filter(Boolean)
-              .map((l) => `- [${l}](#${l.toLowerCase().replace(/\\s+/g, '-')})`)
+              .map((l) => `- [${l}](#${l.toLowerCase().replace(/\s+/g, '-')})`)
               .join('\n')}`;
           case 'divider':
             return `---`;
