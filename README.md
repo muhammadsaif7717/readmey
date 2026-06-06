@@ -74,4 +74,4 @@ Contributions are always welcome! If you have ideas for new markdown blocks, tem
 
 ## 📝 License
 
-Distributed under the MIT License.
+Distributed under the MIT License. See `LICENSE` for more information.
