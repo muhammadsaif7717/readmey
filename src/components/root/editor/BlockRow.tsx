@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Minus, Plus, Trash2 } from 'lucide-react';
+import { GripVertical, ChevronDown, Trash2 } from 'lucide-react';
 import { ReadmeBlock } from '@/types';
 import TableEditor from './TableEditor';
 
@@ -120,7 +120,10 @@ export default function BlockRow({
             setOpen((o) => !o);
           }}
         >
-          {open ? <Minus size={12} /> : <Plus size={12} />}
+          <ChevronDown
+            size={14}
+            className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          />
         </button>
 
         {/* Delete */}
