@@ -4,652 +4,273 @@ import { useReadme } from '@/providers/ReadmeProvider';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Button } from '@/components/ui/button';
-import { Copy, Download, Eye, Code, RefreshCw, Github } from 'lucide-react';
-import { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import rehypeRaw from 'rehype-raw';
+import {
+  Copy,
+  Download,
+  Eye,
+  Code,
+  RefreshCw,
+  Github,
+  ChevronDown,
+  Check,
+} from 'lucide-react';
+import { useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+type ViewMode = 'preview' | 'raw';
+
+// ─── Download helper ─────────────────────────────────────────────────────────
+
+function downloadFile(content: string, filename: string) {
+  const blob = new Blob([content], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ─── Markdown renderer styles ─────────────────────────────────────────────────
+
+const mdClass = [
+  '[&_h1]:text-2xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:pb-2',
+  '[&_h1]:border-b [&_h1]:border-slate-200 dark:[&_h1]:border-[#2a2a2c] [&_h1]:text-zinc-900 dark:[&_h1]:text-[#e8e8e6]',
+  '[&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mb-3 [&_h2]:mt-6 [&_h2]:text-zinc-800 dark:[&_h2]:text-[#e0e0dc]',
+  '[&_h3]:text-base [&_h3]:font-semibold [&_h3]:mb-2 [&_h3]:mt-4 [&_h3]:text-zinc-800 dark:[&_h3]:text-[#d4d4d0]',
+  '[&_p]:text-zinc-600 dark:[&_p]:text-[#aaaaaa] [&_p]:leading-relaxed [&_p]:mb-3',
+  '[&_a]:text-amber-600 dark:[&_a]:text-[#c8a84b] [&_a]:underline [&_a]:underline-offset-2',
+  '[&_code]:bg-slate-100 dark:[&_code]:bg-[#1a1a1b] [&_code]:text-amber-600 dark:[&_code]:text-[#c8a84b] [&_code]:px-1.5 [&_code]:py-0.5',
+  '[&_code]:rounded [&_code]:text-xs [&_code]:font-mono',
+  '[&_pre]:bg-slate-50 dark:[&_pre]:bg-[#111110] [&_pre]:border [&_pre]:border-slate-200 dark:[&_pre]:border-[#2a2a2c] [&_pre]:rounded-lg',
+  '[&_pre]:p-4 [&_pre]:overflow-x-auto [&_pre]:mb-4',
+  '[&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-zinc-700 dark:[&_pre_code]:text-[#c8c8c4]',
+  '[&_blockquote]:border-l-2 [&_blockquote]:border-amber-500 dark:[&_blockquote]:border-[#c8a84b] [&_blockquote]:pl-4',
+  '[&_blockquote]:text-zinc-500 dark:[&_blockquote]:text-[#777774] [&_blockquote]:italic [&_blockquote]:my-3',
+  '[&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-3 [&_ul]:text-zinc-600 dark:[&_ul]:text-[#aaaaaa]',
+  '[&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-3 [&_ol]:text-zinc-600 dark:[&_ol]:text-[#aaaaaa]',
+  '[&_li]:mb-1',
+  '[&_hr]:border-slate-200 dark:[&_hr]:border-[#2a2a2c] [&_hr]:my-6',
+  '[&_table]:w-full [&_table]:border-collapse [&_table]:mb-4',
+  '[&_th]:border [&_th]:border-slate-200 dark:[&_th]:border-[#2a2a2c] [&_th]:px-3 [&_th]:py-2',
+  '[&_th]:bg-slate-50 dark:[&_th]:bg-[#111110] [&_th]:text-left [&_th]:text-xs [&_th]:uppercase',
+  '[&_th]:tracking-wider [&_th]:text-amber-600 dark:[&_th]:text-[#c8a84b]',
+  '[&_td]:border [&_td]:border-slate-200 dark:[&_td]:border-[#1f1f20] [&_td]:px-3 [&_td]:py-2 [&_td]:text-zinc-600 dark:[&_td]:text-[#aaaaaa]',
+  '[&_img]:rounded-lg [&_img]:max-w-full',
+].join(' ');
+
+// ─── Preview ──────────────────────────────────────────────────────────────────
 
 export default function Preview() {
-  const { blocks } = useReadme();
+  const { markdown } = useReadme() as { markdown: string };
+  const [viewMode, setViewMode] = useState<ViewMode>('preview');
   const [copied, setCopied] = useState(false);
-  const [viewMode, setViewMode] = useState<'preview' | 'markdown'>('preview');
+  const [showDownloadMenu, setShowDownloadMenu] = useState(false);
+  const downloadRef = useRef<HTMLDivElement>(null);
 
-  // Enhanced Markdown Generation with support for all element types
-  const generateMarkdown = () => {
-    return blocks
-      .map((block) => {
-        const content = block.content.trim();
+  const isEmpty = !markdown || markdown.trim() === '';
 
-        // Skip empty blocks except for certain types that generate their own content
-        if (
-          !content &&
-          ![
-            'stats',
-            'langs',
-            'streak',
-            'trophy',
-            'views',
-            'activity',
-            'divider',
-          ].includes(block.type)
-        ) {
-          return '';
-        }
-
-        switch (block.type) {
-          // Typography
-          case 'heading':
-            return `# ${content}`;
-          case 'heading2':
-            return `## ${content}`;
-          case 'heading3':
-            return `### ${content}`;
-          case 'text':
-            return content;
-          case 'quote':
-            return `> ${content}`;
-          case 'alert':
-            return `> [!WARNING]\n> ${content}`;
-          case 'tip':
-            return `> [!TIP]\n> ${content}`;
-          case 'highlight':
-            return `> [!IMPORTANT]\n> ${content}`;
-
-          // Lists & Tables
-          case 'list':
-            return content
-              .split('\n')
-              .filter(Boolean)
-              .map((l) => `- ${l}`)
-              .join('\n');
-          case 'numbered-list':
-            return content
-              .split('\n')
-              .filter(Boolean)
-              .map((l, i) => `${i + 1}. ${l}`)
-              .join('\n');
-          case 'task':
-            return content
-              .split('\n')
-              .filter(Boolean)
-              .map((l) => {
-                if (l.startsWith('[x]') || l.startsWith('[ ]')) {
-                  return `- ${l}`;
-                }
-                return `- [ ] ${l}`;
-              })
-              .join('\n');
-          case 'table':
-          case 'comparison':
-            return content;
-          case 'definition':
-            return content
-              .split('\n')
-              .filter(Boolean)
-              .map((l) => {
-                const [term, def] = l.split(':');
-                return `**${term?.trim() || ''}**: ${def?.trim() || ''}`;
-              })
-              .join('\n\n');
-
-          // Code & Technical
-          case 'code':
-            return `\`\`\`\n${content}\n\`\`\``;
-          case 'inline-code':
-            return `\`${content}\``;
-          case 'terminal':
-            return `\`\`\`bash\n${content}\n\`\`\``;
-          case 'file-tree':
-            return `\`\`\`\n${content}\n\`\`\``;
-          case 'api':
-            return `### API Endpoint\n\`\`\`\n${content}\n\`\`\``;
-          case 'config':
-            return `\`\`\`json\n${content}\n\`\`\``;
-
-          // Media & Assets
-          case 'image':
-            return `![Image](${content})`;
-          case 'banner':
-            return `![Banner](${content})`;
-          case 'gif':
-            return `![Demo](${content})`;
-          case 'screenshot':
-            return `![Screenshot](${content})`;
-          case 'logo':
-            return `<p align="center">\n  <img src="${content}" alt="Logo" width="200"/>\n</p>`;
-          case 'video':
-            return `[![Video](${content})](${content})`;
-
-          // GitHub & Stats
-          case 'stats':
-            return `![GitHub Stats](https://github-readme-stats.vercel.app/api?username=${content}&show_icons=true&theme=radical)`;
-          case 'langs':
-            return `![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=${content}&layout=compact&theme=radical)`;
-          case 'streak':
-            return `![GitHub Streak](https://github-readme-streak-stats.herokuapp.com/?user=${content}&theme=radical)`;
-          case 'trophy':
-            return `![Trophy](https://github-profile-trophy.vercel.app/?username=${content}&theme=radical&no-frame=true&no-bg=true&row=1&column=7)`;
-          case 'views':
-            return `![Profile Views](https://komarev.com/ghpvc/?username=${content}&color=blue&style=flat-square)`;
-          case 'activity':
-            return `![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=${content}&theme=react-dark)`;
-
-          // Badges & Links
-          case 'badges':
-          case 'social':
-            return content.split('\n').filter(Boolean).join(' ');
-          case 'tech-stack':
-            return `### 🛠️ Tech Stack\n\n${content}`;
-          case 'license':
-            return `![License](https://img.shields.io/badge/license-${content}-blue.svg)`;
-          case 'build':
-            return `![Build Status](https://img.shields.io/badge/build-${content}-brightgreen.svg)`;
-          case 'version':
-            return `![Version](https://img.shields.io/badge/version-${content}-blue.svg)`;
-          case 'coverage':
-            return `![Coverage](https://img.shields.io/badge/coverage-${content}%25-brightgreen.svg)`;
-
-          // Project Info
-          case 'features':
-            return `## ✨ Features\n\n${content
-              .split('\n')
-              .filter(Boolean)
-              .map((l) => `- ${l}`)
-              .join('\n')}`;
-          case 'installation':
-            return `## 📦 Installation\n\n\`\`\`bash\n${content}\n\`\`\``;
-          case 'quickstart':
-            return `## 🚀 Quick Start\n\n${content}`;
-          case 'usage':
-            return `## 💻 Usage\n\n${content}`;
-          case 'api-docs':
-            return `## 📚 API Documentation\n\n${content}`;
-          case 'faq':
-            return `## ❓ FAQ\n\n${content}`;
-
-          // Community & Support
-          case 'contributing':
-            return `## 🤝 Contributing\n\n${content}`;
-          case 'conduct':
-            return `## 📜 Code of Conduct\n\n${content}`;
-          case 'support':
-            return `## 💬 Support\n\n${content}`;
-          case 'sponsors':
-            return `## ❤️ Sponsors\n\n${content}`;
-          case 'authors':
-            return `## 👥 Authors\n\n${content}`;
-          case 'acknowledgments':
-            return `## 🙏 Acknowledgments\n\n${content}`;
-
-          // Documentation
-          case 'demo':
-            return `## 🎯 Demo\n\n[Live Demo](${content})`;
-          case 'docs':
-            return `## 📖 Documentation\n\n[Full Documentation](${content})`;
-          case 'roadmap':
-            return `## 🗺️ Roadmap\n\n${content}`;
-          case 'changelog':
-            return `## 📝 Changelog\n\n${content}`;
-          case 'security':
-            return `## 🔒 Security\n\n${content}`;
-          case 'testing':
-            return `## 🧪 Testing\n\n${content}`;
-
-          // Contact & Social
-          case 'contact':
-            return `## 📧 Contact\n\n${content}`;
-          case 'website':
-            return `🌐 **Website**: ${content}`;
-          case 'chat':
-            return `💬 **Join our community**: ${content}`;
-          case 'newsletter':
-            return `📬 **Newsletter**: ${content}`;
-
-          // Achievements
-          case 'achievements':
-            return `## 🏆 Achievements\n\n${content}`;
-          case 'metrics':
-            return `## 📊 Metrics\n\n${content}`;
-          case 'testimonials':
-            return `## 💭 Testimonials\n\n${content}`;
-          case 'casestudy':
-            return `## 📖 Case Studies\n\n${content}`;
-
-          // Structure & Layout
-          case 'divider':
-            return `---`;
-          case 'details':
-            return `<details>\n<summary>Click to expand</summary>\n\n${content}\n\n</details>`;
-          case 'columns':
-            const [col1, col2] = content.split('|||');
-            return `<table>\n<tr>\n<td width="50%">\n\n${col1?.trim() || ''}\n\n</td>\n<td width="50%">\n\n${col2?.trim() || ''}\n\n</td>\n</tr>\n</table>`;
-          case 'callout':
-            return `> [!NOTE]\n> ${content}`;
-
-          default:
-            return content;
-        }
-      })
-      .filter(Boolean)
-      .join('\n\n');
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(markdown);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
-  const finalMarkdown = generateMarkdown();
-
-  // Copy to Clipboard with feedback
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(finalMarkdown);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      alert('Failed to copy. Please try again.');
-    }
-  };
-
-  // Download as README.md
-  const downloadFile = () => {
-    const blob = new Blob([finalMarkdown], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'README.md';
-    a.click();
-    URL.revokeObjectURL(url);
+  const handleDownload = (filename: string) => {
+    downloadFile(markdown, filename);
+    setShowDownloadMenu(false);
   };
 
   return (
-    <div className="flex h-full w-full flex-col border-l border-gray-200 bg-white dark:border-[#30363d] dark:bg-[#0d1117]">
-      {/* GitHub-style Header */}
-      <div className="sticky top-0 z-10 shrink-0 border-b border-gray-200 bg-white dark:border-[#30363d] dark:bg-[#0d1117]">
-        <div className="p-4 sm:p-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="rounded-md bg-gray-100 p-2 dark:bg-[#21262d]">
-                <Github
-                  size={20}
-                  className="text-gray-700 dark:text-gray-300"
-                />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-gray-100">
-                  README.md
-                </h2>
-                <p className="mt-0.5 text-xs text-gray-600 sm:text-sm dark:text-gray-400">
-                  GitHub-style preview
-                </p>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={copyToClipboard}
-                className="flex-1 border-gray-300 hover:bg-gray-100 sm:flex-none dark:border-[#30363d] dark:hover:bg-[#21262d]"
-                disabled={blocks.length === 0}
+    <div className="flex h-full flex-col overflow-hidden bg-white dark:bg-[#0a0a0b]">
+      {/* ── Toolbar ──────────────────────────────────────────────── */}
+      <div className="flex shrink-0 items-center gap-2 border-b border-slate-200 bg-slate-50 px-3 py-2 dark:border-[#1f1f20] dark:bg-[#0d0d0e]">
+        {/* View mode toggle */}
+        <div className="flex items-center gap-0.5 rounded-md border border-slate-200 bg-white p-0.5 dark:border-[#2a2a2c] dark:bg-[#111110]">
+          {(['preview', 'raw'] as ViewMode[]).map((mode) => {
+            const active = viewMode === mode;
+            return (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                className={`flex items-center gap-1.5 rounded px-2.5 py-1 text-xs transition-all duration-150 ${
+                  active
+                    ? 'bg-slate-100 text-amber-600 dark:bg-[#1f1f20] dark:text-[#c8a84b]'
+                    : 'bg-transparent text-zinc-500 dark:text-[#555558]'
+                }`}
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                }}
               >
-                {copied ? (
-                  <>
-                    <RefreshCw size={14} className="mr-2 animate-spin" />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy size={14} className="mr-2" />
-                    Copy
-                  </>
-                )}
-              </Button>
-              <Button
-                size="sm"
-                onClick={downloadFile}
-                className="flex-1 bg-[#2da44e] text-white hover:bg-[#2c974b] sm:flex-none"
-                disabled={blocks.length === 0}
-              >
-                <Download size={14} className="mr-2" />
-                Download
-              </Button>
-            </div>
-          </div>
+                {mode === 'preview' ? <Eye size={11} /> : <Code size={11} />}
+                {mode.charAt(0).toUpperCase() + mode.slice(1)}
+              </button>
+            );
+          })}
+        </div>
 
-          {/* View Toggle Tabs */}
-          <Tabs
-            value={viewMode}
-            onValueChange={(v) => setViewMode(v as any)}
-            className="mt-4"
+        <div className="flex-1" />
+
+        {/* Copy */}
+        <button
+          onClick={handleCopy}
+          disabled={isEmpty}
+          className={`group flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs transition-all duration-150 hover:border-slate-300 disabled:cursor-not-allowed disabled:opacity-30 dark:border-[#2a2a2c] dark:bg-[#111110] dark:hover:border-[#3a3a3c] ${
+            copied
+              ? 'text-amber-600 dark:text-[#c8a84b]'
+              : 'text-zinc-500 dark:text-[#555558]'
+          }`}
+          style={{
+            fontFamily: "'JetBrains Mono', monospace",
+          }}
+        >
+          {copied ? <Check size={11} /> : <Copy size={11} />}
+          {copied ? 'Copied!' : 'Copy'}
+        </button>
+
+        {/* Download menu */}
+        <div className="relative" ref={downloadRef}>
+          <button
+            onClick={() => setShowDownloadMenu((v) => !v)}
+            disabled={isEmpty}
+            className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-30 ${
+              isEmpty
+                ? 'bg-slate-100 text-zinc-400 dark:bg-[#1a1a1b] dark:text-[#555558]'
+                : 'bg-amber-400 text-zinc-900 hover:bg-amber-500 dark:bg-[#c8a84b] dark:text-[#0a0a0b] dark:hover:bg-[#d4b55a]'
+            }`}
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+            }}
           >
-            <TabsList className="grid w-full grid-cols-2 bg-gray-100 sm:w-auto dark:bg-[#21262d]">
-              <TabsTrigger
-                value="preview"
-                className="text-xs data-[state=active]:bg-white sm:text-sm dark:data-[state=active]:bg-[#0d1117]"
+            <Download size={11} />
+            Download
+            <ChevronDown
+              size={10}
+              style={{
+                transform: showDownloadMenu ? 'rotate(180deg)' : 'none',
+                transition: 'transform 0.15s',
+              }}
+            />
+          </button>
+
+          <AnimatePresence>
+            {showDownloadMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: -4, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -4, scale: 0.97 }}
+                transition={{ duration: 0.12 }}
+                className="absolute top-full right-0 z-30 mt-1 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-md dark:border-[#2a2a2c] dark:bg-[#111110] dark:shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
+                style={{
+                  minWidth: '160px',
+                }}
               >
-                <Eye size={14} className="mr-2" />
-                Preview
-              </TabsTrigger>
-              <TabsTrigger
-                value="markdown"
-                className="text-xs data-[state=active]:bg-white sm:text-sm dark:data-[state=active]:bg-[#0d1117]"
-              >
-                <Code size={14} className="mr-2" />
-                Code
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+                {[
+                  {
+                    label: 'README.md',
+                    filename: 'README.md',
+                    icon: <Github size={12} />,
+                  },
+                  {
+                    label: 'readme.md',
+                    filename: 'readme.md',
+                    icon: <Download size={12} />,
+                  },
+                  {
+                    label: 'CONTRIBUTING.md',
+                    filename: 'CONTRIBUTING.md',
+                    icon: <Download size={12} />,
+                  },
+                ].map((item) => (
+                  <button
+                    key={item.filename}
+                    onClick={() => handleDownload(item.filename)}
+                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-zinc-600 transition-colors hover:bg-slate-50 hover:text-amber-600 dark:text-[#aaaaaa] dark:hover:bg-[#1a1a1b] dark:hover:text-[#c8a84b]"
+                    style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                    }}
+                  >
+                    {item.icon}
+                    {item.label}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
-      {/* Content Area */}
-      <div className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full">
-          <div className="mx-auto max-w-[1012px] p-4 sm:p-8 md:p-12">
-            {blocks.length === 0 ? (
-              <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 text-gray-500 dark:border-[#30363d] dark:bg-[#161b22] dark:text-gray-400">
-                <Eye size={48} className="mb-4 opacity-20" />
-                <p className="text-sm font-medium sm:text-base">
-                  This README file is still empty
-                </p>
-                <p className="mt-1 text-xs opacity-70 sm:text-sm">
-                  Add elements from the sidebar
-                </p>
-              </div>
+      {/* Click-outside to close download menu */}
+      {showDownloadMenu && (
+        <div
+          className="fixed inset-0 z-20"
+          onClick={() => setShowDownloadMenu(false)}
+        />
+      )}
 
-            ) : (
-              <Tabs value={viewMode} className="w-full">
-                {/* GitHub-Authentic Preview Mode */}
-                <TabsContent value="preview" className="mt-0">
-                  <div className="markdown-body">
-                    <style jsx global>{`
-                      .markdown-body {
-                        font-family:
-                          -apple-system, BlinkMacSystemFont, 'Segoe UI',
-                          'Noto Sans', Helvetica, Arial, sans-serif,
-                          'Apple Color Emoji', 'Segoe UI Emoji';
-                        font-size: 16px;
-                        line-height: 1.6;
-                        word-wrap: break-word;
-                        color: #24292f;
-                      }
-
-                      .dark .markdown-body {
-                        color: #c9d1d9;
-                      }
-
-                      .markdown-body h1 {
-                        font-size: 2em;
-                        font-weight: 600;
-                        padding-bottom: 0.3em;
-                        border-bottom: 1px solid #d0d7de;
-                        margin-top: 24px;
-                        margin-bottom: 16px;
-                      }
-
-                      .dark .markdown-body h1 {
-                        border-bottom-color: #21262d;
-                      }
-
-                      .markdown-body h2 {
-                        font-size: 1.5em;
-                        font-weight: 600;
-                        padding-bottom: 0.3em;
-                        border-bottom: 1px solid #d0d7de;
-                        margin-top: 24px;
-                        margin-bottom: 16px;
-                      }
-
-                      .dark .markdown-body h2 {
-                        border-bottom-color: #21262d;
-                      }
-
-                      .markdown-body h3 {
-                        font-size: 1.25em;
-                        font-weight: 600;
-                        margin-top: 24px;
-                        margin-bottom: 16px;
-                      }
-
-                      .markdown-body h4 {
-                        font-size: 1em;
-                        font-weight: 600;
-                        margin-top: 24px;
-                        margin-bottom: 16px;
-                      }
-
-                      .markdown-body p {
-                        margin-top: 0;
-                        margin-bottom: 16px;
-                      }
-
-                      .markdown-body a {
-                        color: #0969da;
-                        text-decoration: none;
-                      }
-
-                      .dark .markdown-body a {
-                        color: #58a6ff;
-                      }
-
-                      .markdown-body a:hover {
-                        text-decoration: underline;
-                      }
-
-                      .markdown-body code {
-                        padding: 0.2em 0.4em;
-                        margin: 0;
-                        font-size: 85%;
-                        background-color: rgba(175, 184, 193, 0.2);
-                        border-radius: 6px;
-                        font-family:
-                          ui-monospace,
-                          SFMono-Regular,
-                          SF Mono,
-                          Menlo,
-                          Consolas,
-                          Liberation Mono,
-                          monospace;
-                      }
-
-                      .dark .markdown-body code {
-                        background-color: rgba(110, 118, 129, 0.4);
-                      }
-
-                      .markdown-body pre {
-                        padding: 16px;
-                        overflow: auto;
-                        font-size: 85%;
-                        line-height: 1.45;
-                        background-color: #f6f8fa;
-                        border-radius: 6px;
-                        margin-top: 0;
-                        margin-bottom: 16px;
-                      }
-
-                      .dark .markdown-body pre {
-                        background-color: #161b22;
-                      }
-
-                      .markdown-body pre code {
-                        background-color: transparent;
-                        border: 0;
-                        display: inline;
-                        line-height: inherit;
-                        margin: 0;
-                        overflow: visible;
-                        padding: 0;
-                        word-wrap: normal;
-                      }
-
-                      .markdown-body blockquote {
-                        padding: 0 1em;
-                        color: #57606a;
-                        border-left: 0.25em solid #d0d7de;
-                        margin-top: 0;
-                        margin-bottom: 16px;
-                      }
-
-                      .dark .markdown-body blockquote {
-                        color: #8b949e;
-                        border-left-color: #3b434b;
-                      }
-
-                      .markdown-body ul,
-                      .markdown-body ol {
-                        padding-left: 2em;
-                        margin-top: 0;
-                        margin-bottom: 16px;
-                      }
-
-                      .markdown-body li {
-                        margin-top: 0.25em;
-                      }
-
-                      .markdown-body li + li {
-                        margin-top: 0.25em;
-                      }
-
-                      .markdown-body table {
-                        border-spacing: 0;
-                        border-collapse: collapse;
-                        display: block;
-                        width: max-content;
-                        max-width: 100%;
-                        overflow: auto;
-                        margin-top: 0;
-                        margin-bottom: 16px;
-                      }
-
-                      .markdown-body table tr {
-                        background-color: #ffffff;
-                        border-top: 1px solid hsla(210, 18%, 87%, 1);
-                      }
-
-                      .dark .markdown-body table tr {
-                        background-color: #0d1117;
-                        border-top-color: #21262d;
-                      }
-
-                      .markdown-body table tr:nth-child(2n) {
-                        background-color: #f6f8fa;
-                      }
-
-                      .dark .markdown-body table tr:nth-child(2n) {
-                        background-color: #161b22;
-                      }
-
-                      .markdown-body table th,
-                      .markdown-body table td {
-                        padding: 6px 13px;
-                        border: 1px solid #d0d7de;
-                      }
-
-                      .dark .markdown-body table th,
-                      .dark .markdown-body table td {
-                        border-color: #3b434b;
-                      }
-
-                      .markdown-body table th {
-                        font-weight: 600;
-                        background-color: #f6f8fa;
-                      }
-
-                      .dark .markdown-body table th {
-                        background-color: #161b22;
-                      }
-
-                      .markdown-body img {
-                        max-width: 100%;
-                        height: auto;
-                        border-radius: 6px;
-                        margin-top: 16px;
-                        margin-bottom: 16px;
-                      }
-
-                      .markdown-body hr {
-                        height: 0.25em;
-                        padding: 0;
-                        margin: 24px 0;
-                        background-color: #d0d7de;
-                        border: 0;
-                      }
-
-                      .dark .markdown-body hr {
-                        background-color: #21262d;
-                      }
-
-                      .markdown-body input[type='checkbox'] {
-                        margin-right: 0.5em;
-                      }
-
-                      .markdown-body details {
-                        margin-bottom: 16px;
-                      }
-
-                      .markdown-body summary {
-                        cursor: pointer;
-                        font-weight: 600;
-                      }
-                    `}</style>
-
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      rehypePlugins={[rehypeRaw]}
-                    >
-                      {finalMarkdown}
-                    </ReactMarkdown>
-                  </div>
-                </TabsContent>
-
-                {/* Markdown Code Mode */}
-                <TabsContent value="markdown" className="mt-0">
-                  <div className="relative">
-                    <pre className="overflow-x-auto rounded-lg border border-gray-200 bg-[#f6f8fa] p-4 font-mono text-xs leading-relaxed text-gray-900 sm:p-6 sm:text-sm dark:border-[#30363d] dark:bg-[#161b22] dark:text-gray-100">
-                      <code>{finalMarkdown || '# Empty README'}</code>
-                    </pre>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={copyToClipboard}
-                      className="absolute top-2 right-2 border-gray-300 bg-white text-xs dark:border-[#30363d] dark:bg-[#21262d]"
-                    >
-                      {copied ? 'Copied!' : 'Copy Code'}
-                    </Button>
-                  </div>
-                </TabsContent>
-              </Tabs>
-            )}
-          </div>
-
-          {/* GitHub-style Stats Footer */}
-          {blocks.length > 0 && (
-            <div className="mx-auto max-w-[1012px] px-4 pb-6 sm:px-8 md:px-12">
-              <div className="flex flex-wrap items-center gap-3 rounded-lg border border-gray-200 bg-gray-50 p-3 text-xs text-gray-600 dark:border-[#30363d] dark:bg-[#161b22] dark:text-gray-400">
-                <span className="flex items-center gap-1">
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">
-                    {blocks.length}
-                  </span>{' '}
-                  blocks
-                </span>
-                <span className="text-gray-400 dark:text-gray-600">•</span>
-                <span className="flex items-center gap-1">
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">
-                    {finalMarkdown.split('\n').length}
-                  </span>{' '}
-                  lines
-                </span>
-                <span className="text-gray-400 dark:text-gray-600">•</span>
-                <span className="flex items-center gap-1">
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">
-                    {finalMarkdown.length}
-                  </span>{' '}
-                  characters
-                </span>
-              </div>
+      {/* ── Content ──────────────────────────────────────────────── */}
+      <div className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-zinc-800 flex-1 overflow-y-auto px-6 py-6">
+        {isEmpty ? (
+          <div className="flex h-full flex-col items-center justify-center gap-3 text-center select-none">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 dark:border-[#2a2a2c] dark:bg-[#111110]">
+              <Eye size={18} className="text-zinc-400 dark:text-[#2a2a2c]" />
             </div>
-          )}
-        </ScrollArea>
+            <p
+              className="text-sm text-zinc-400 dark:text-[#555558]"
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+              }}
+            >
+              // nothing to preview yet
+            </p>
+          </div>
+        ) : viewMode === 'preview' ? (
+          <div
+            className={`prose-sm max-w-none ${mdClass}`}
+            style={{ fontFamily: "'Geist', sans-serif" }}
+          >
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {markdown}
+            </ReactMarkdown>
+          </div>
+        ) : (
+          <pre
+            className="text-xs leading-relaxed break-words whitespace-pre-wrap text-zinc-700 dark:text-[#c8c8c4]"
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+            }}
+          >
+            {markdown}
+          </pre>
+        )}
       </div>
+
+      {/* ── Footer ───────────────────────────────────────────────── */}
+      {!isEmpty && (
+        <div className="flex shrink-0 items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-2 dark:border-[#1f1f20] dark:bg-[#0d0d0e]">
+          <span
+            className="text-xs text-zinc-400 dark:text-[#2a2a2c]"
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+            }}
+          >
+            {markdown.split('\n').length} lines · {markdown.length} chars
+          </span>
+          <div className="flex items-center gap-1">
+            <div className="h-1.5 w-1.5 rounded-full bg-amber-500 dark:bg-[#c8a84b]" />
+            <span
+              className="text-xs text-zinc-500 dark:text-[#555558]"
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+              }}
+            >
+              live
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

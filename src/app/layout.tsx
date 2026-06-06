@@ -5,7 +5,6 @@ import Navbar from '@/components/shared/Navbar';
 import NextThemeProvider from '@/providers/NextThemeProvider';
 import { ReadmeProvider } from '@/providers/ReadmeProvider';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/root/AppSidebar';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -49,16 +48,12 @@ export default function RootLayout({
         <NextThemeProvider>
           <ReadmeProvider>
             <SidebarProvider defaultOpen={true}>
-              {/* Global Navbar */}
-              <Navbar />
-
-              {/* Main App Layout - Sidebar + Content */}
-              <div className="flex w-full overflow-hidden">
-                {/* Sidebar - Hidden on mobile by default, toggleable */}
-                <AppSidebar />
+              <div className="flex min-h-screen w-full flex-col">
+                {/* Global Navbar */}
+                <Navbar />
 
                 {/* Main Content Area */}
-                <main className="bg-background flex-1 overflow-hidden">
+                <main className="bg-background w-full flex-1 overflow-hidden">
                   {children}
                 </main>
               </div>
