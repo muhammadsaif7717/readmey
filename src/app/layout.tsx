@@ -17,21 +17,59 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Easy README - Professional GitHub README Generator',
+  title: 'Readmey - Professional GitHub README Generator',
   description:
     'Create beautiful, professional GitHub README files in minutes with our intuitive drag-and-drop builder. 70+ customizable elements, live preview, and instant markdown export.',
   keywords: [
-    'README generator',
-    'GitHub README',
+    'readme generator',
+    'github readme generator',
     'markdown editor',
-    'documentation builder',
-    'GitHub profile',
+    'readme editor',
+    'developer tools',
+    'github profile builder',
+    'open source project documentation',
   ],
-  authors: [{ name: 'Easy README Team' }],
+  authors: [{ name: 'Readmey Team' }],
+  creator: 'Readmey',
+  publisher: 'Readmey',
+  metadataBase: new URL('https://readmey.vercel.app'),
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
-    title: 'Easy README - Professional GitHub README Generator',
-    description: 'Create stunning GitHub READMEs with ease',
+    title: 'Readmey - Professional GitHub README Generator',
+    description:
+      'Create beautiful, professional GitHub README files in minutes with our intuitive drag-and-drop builder.',
+    url: 'https://readmey.vercel.app',
+    siteName: 'Readmey',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Readmey - GitHub README Generator',
+      },
+    ],
+    locale: 'en_US',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Readmey - Professional GitHub README Generator',
+    description:
+      'Create beautiful, professional GitHub README files in minutes with our intuitive drag-and-drop builder.',
+    images: ['/og-image.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
 };
 

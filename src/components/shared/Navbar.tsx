@@ -63,8 +63,8 @@ const Navbar = () => {
               <Link href="/" className="group flex items-center gap-2.5">
                 {/* Logo text */}
                 <div className="hidden flex-col sm:flex" style={{ gap: '1px' }}>
-                  <span className="font-syne text-[17px] leading-none font-extrabold tracking-tight text-zinc-900 dark:text-amber-50">
-                    EasyReadme
+                  <span className="font-syne text-lg font-extrabold tracking-tight text-zinc-900 dark:text-amber-50">
+                    Readmey
                   </span>
                   <span className="font-mono text-[9px] font-medium tracking-[0.14em] text-amber-500 uppercase">
                     Pro Builder

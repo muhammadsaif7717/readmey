@@ -17,9 +17,7 @@ import {
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-
-type ViewMode = 'preview' | 'raw';
+import { ViewMode } from '@/types';
 
 // ─── Download helper ─────────────────────────────────────────────────────────
 
@@ -63,6 +61,11 @@ const mdClass = [
 
 // ─── Preview ──────────────────────────────────────────────────────────────────
 
+/**
+ * Preview component that dynamically renders the Markdown content based on the
+ * current blocks in the ReadmeProvider. Supports "preview" (rendered HTML)
+ * and "raw" (Markdown code) modes, along with clipboard copy and file download.
+ */
 export default function Preview() {
   const { markdown } = useReadme() as { markdown: string };
   const [viewMode, setViewMode] = useState<ViewMode>('preview');

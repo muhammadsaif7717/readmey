@@ -17,11 +17,7 @@ import { GripVertical, Plus } from 'lucide-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type ReadmeBlock = {
-  id: string;
-  type: string;
-  content: string;
-};
+import { ReadmeBlock } from '@/types';
 
 interface ReadmeContextType {
   blocks: ReadmeBlock[];
@@ -39,6 +35,10 @@ const ReadmeContext = createContext<ReadmeContextType | undefined>(undefined);
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
 
+/**
+ * Context provider that manages the state of the README blocks, drag-and-drop mechanics,
+ * and markdown generation. It wraps the entire application to provide global access.
+ */
 export function ReadmeProvider({ children }: { children: React.ReactNode }) {
   const [blocks, setBlocks] = useState<ReadmeBlock[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -48,7 +48,7 @@ export function ReadmeProvider({ children }: { children: React.ReactNode }) {
   // ── Persist ────────────────────────────────────────────────────────────────
 
   React.useEffect(() => {
-    const saved = localStorage.getItem('easy-readme-blocks');
+    const saved = localStorage.getItem('readmey-blocks');
     if (saved) {
       try {
         setBlocks(JSON.parse(saved));
@@ -61,7 +61,7 @@ export function ReadmeProvider({ children }: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem('easy-readme-blocks', JSON.stringify(blocks));
+      localStorage.setItem('readmey-blocks', JSON.stringify(blocks));
     }
   }, [blocks, isLoaded]);
 
@@ -213,6 +213,8 @@ export function ReadmeProvider({ children }: { children: React.ReactNode }) {
             return `\`\`\`\n${content}\n\`\`\``;
           case 'inline-code':
             return `\`${content}\``;
+          case 'env-vars':
+            return `### Environment Variables\n\nTo run this project, you will need to add the following environment variables to your .env file\n\n\`\`\`bash\n${content}\n\`\`\``;
           case 'terminal':
             return `\`\`\`bash\n${content}\n\`\`\``;
           case 'file-tree':
@@ -225,6 +227,10 @@ export function ReadmeProvider({ children }: { children: React.ReactNode }) {
           // Media & Assets
           case 'image':
             return `![Image](${content})`;
+          case 'architecture':
+            return `## 🏗 Architecture\n\n![Architecture Diagram](${content})`;
+          case 'sandbox':
+            return `## 💻 Live Demo\n\n[![Edit on CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](${content})`;
           case 'banner':
             return `![Banner](${content})`;
           case 'gif':
@@ -266,6 +272,14 @@ export function ReadmeProvider({ children }: { children: React.ReactNode }) {
             return `![Coverage](https://img.shields.io/badge/coverage-${content}%25-brightgreen.svg)`;
 
           // Project Info
+          case 'prerequisites':
+            return `## 📋 Prerequisites\n\n${content
+              .split('\n')
+              .filter(Boolean)
+              .map((l) => `- ${l}`)
+              .join('\n')}`;
+          case 'deployment':
+            return `## 🚀 Deployment\n\nTo deploy this project run\n\n\`\`\`bash\n${content}\n\`\`\``;
           case 'features':
             return `## ✨ Features\n\n${content
               .split('\n')
@@ -332,6 +346,12 @@ export function ReadmeProvider({ children }: { children: React.ReactNode }) {
             return `## 📖 Case Studies\n\n${content}`;
 
           // Structure & Layout
+          case 'toc':
+            return `## Table of Contents\n\n${content
+              .split('\n')
+              .filter(Boolean)
+              .map((l) => `- [${l}](#${l.toLowerCase().replace(/\\s+/g, '-')})`)
+              .join('\n')}`;
           case 'divider':
             return `---`;
           case 'details':
@@ -425,6 +445,10 @@ export function ReadmeProvider({ children }: { children: React.ReactNode }) {
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
+/**
+ * Custom hook to access the ReadmeContext.
+ * @returns {ReadmeContextType} The context value containing blocks and actions.
+ */
 export const useReadme = () => {
   const context = useContext(ReadmeContext);
   if (!context)

@@ -1,10 +1,4 @@
-export type Template = {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  blocks: { type: string; content: string }[];
-};
+import { Template } from '@/types';
 
 export const TEMPLATES: Template[] = [
   {
@@ -13,23 +7,32 @@ export const TEMPLATES: Template[] = [
     description: 'Perfect for React, Vue, Angular, or any web UI project.',
     icon: '🎨',
     blocks: [
-      { type: 'heading', content: 'Awesome Frontend Project' },
+      {
+        type: 'banner',
+        content:
+          'https://via.placeholder.com/800x400.png?text=Awesome+Frontend+App',
+      },
+      { type: 'heading', content: 'Awesome Frontend App' },
       {
         type: 'badges',
         content:
-          'https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB',
+          'https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB\nhttps://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white\nhttps://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white',
       },
       {
         type: 'text',
         content:
-          "A brief description of what this project does and who it's for.",
+          'A visually stunning and highly responsive frontend application built with modern web technologies.',
       },
       {
-        type: 'image',
-        content:
-          'https://via.placeholder.com/800x400.png?text=Project+Screenshot',
+        type: 'sandbox',
+        content: 'https://codesandbox.io/p/sandbox/github/your-repo',
       },
-      { type: 'features', content: 'Feature 1\nFeature 2\nFeature 3' },
+      {
+        type: 'features',
+        content:
+          'Responsive Design\nDark Mode Support\nAccessible UI Components\nServer-Side Rendering',
+      },
+      { type: 'prerequisites', content: 'Node.js >= 18.x\nnpm >= 9.x' },
       { type: 'installation', content: 'npm install\nnpm run dev' },
     ],
   },
@@ -40,30 +43,124 @@ export const TEMPLATES: Template[] = [
       'Ideal for Node.js, Python, Go, or any server-side application.',
     icon: '⚙️',
     blocks: [
-      { type: 'heading', content: 'Powerful API Server' },
+      { type: 'heading', content: 'Scalable Microservice API' },
       {
         type: 'badges',
         content:
-          'https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white',
+          'https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white\nhttps://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB\nhttps://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white',
       },
       {
         type: 'text',
-        content: 'Scalable backend API for awesome applications.',
+        content:
+          'A high-performance, robust, and scalable backend service powering mission-critical applications.',
       },
-      { type: 'api-docs', content: 'Detailed API documentation goes here.' },
-      { type: 'installation', content: 'npm install\nnpm start' },
+      {
+        type: 'architecture',
+        content:
+          'https://via.placeholder.com/800x400.png?text=System+Architecture',
+      },
+      {
+        type: 'env-vars',
+        content:
+          'PORT=8080\nDATABASE_URL=postgres://user:pass@localhost:5432/db\nJWT_SECRET=supersecret',
+      },
+      {
+        type: 'api-docs',
+        content:
+          'Detailed OpenAPI/Swagger documentation can be found at `/api/docs`.',
+      },
+      { type: 'deployment', content: 'docker-compose up -d' },
     ],
   },
   {
-    id: 'minimal',
-    title: 'Minimal README',
+    id: 'fullstack',
+    title: 'Fullstack App',
     description:
-      'A clean, simple starting point for small projects or libraries.',
-    icon: '📝',
+      'Comprehensive setup for Next.js, MERN, or fullstack frameworks.',
+    icon: '🔥',
     blocks: [
-      { type: 'heading', content: 'Project Title' },
-      { type: 'text', content: 'Project description' },
-      { type: 'installation', content: 'npm install' },
+      { type: 'heading', content: 'Ultimate Fullstack Application' },
+      {
+        type: 'badges',
+        content:
+          'https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white\nhttps://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white',
+      },
+      {
+        type: 'text',
+        content:
+          'End-to-end fullstack application featuring server actions, edge computing, and seamless database integration.',
+      },
+      {
+        type: 'toc',
+        content:
+          'Features\nPrerequisites\nEnvironment Variables\nInstallation\nDeployment',
+      },
+      {
+        type: 'features',
+        content: 'End-to-end type safety\nAuthentication\nReal-time events',
+      },
+      {
+        type: 'env-vars',
+        content:
+          'NEXT_PUBLIC_API_URL=http://localhost:3000\nDATABASE_URL=postgres://user:pass@localhost:5432/db',
+      },
+      {
+        type: 'installation',
+        content: 'npm install\nnpm run build\nnpm start',
+      },
+      { type: 'deployment', content: 'vercel deploy --prod' },
+    ],
+  },
+  {
+    id: 'design-system',
+    title: 'Design System',
+    description: 'Perfect for UI libraries, Storybook, and component packages.',
+    icon: '💅',
+    blocks: [
+      { type: 'heading', content: 'Corporate Design System' },
+      {
+        type: 'badges',
+        content:
+          'https://img.shields.io/badge/-Storybook-FF4785?style=for-the-badge&logo=storybook&logoColor=white',
+      },
+      {
+        type: 'text',
+        content:
+          'A comprehensive suite of accessible, reusable, and composable React components.',
+      },
+      {
+        type: 'sandbox',
+        content: 'https://codesandbox.io/p/sandbox/react-ui-components',
+      },
+      { type: 'installation', content: 'npm install @my-org/design-system' },
+      {
+        type: 'usage',
+        content:
+          'import { Button } from "@my-org/design-system";\n\n<Button variant="primary">Click Me</Button>',
+      },
+    ],
+  },
+  {
+    id: 'data-science',
+    title: 'Data Science / ML',
+    description: 'Tailored for Python, Jupyter notebooks, and AI/ML projects.',
+    icon: '🧠',
+    blocks: [
+      { type: 'heading', content: 'Predictive ML Model' },
+      {
+        type: 'badges',
+        content:
+          'https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white\nhttps://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white',
+      },
+      {
+        type: 'text',
+        content:
+          'A state-of-the-art deep learning model for computer vision tasks.',
+      },
+      { type: 'prerequisites', content: 'Python 3.10+\nCUDA Toolkit 11.8' },
+      { type: 'installation', content: 'pip install -r requirements.txt' },
+      { type: 'usage', content: 'python train.py --epochs 50 --batch_size 32' },
+      { type: 'metrics', content: 'Accuracy: 98.5%\nF1 Score: 0.97' },
     ],
   },
   {
@@ -78,14 +175,20 @@ export const TEMPLATES: Template[] = [
         content:
           'https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white',
       },
-      { type: 'text', content: 'The best mobile app ever made.' },
+      {
+        type: 'text',
+        content:
+          'A beautiful, native-feeling mobile application with smooth animations.',
+      },
       {
         type: 'screenshot',
         content: 'https://via.placeholder.com/300x600.png?text=App+Screenshot',
       },
+      { type: 'prerequisites', content: 'Flutter SDK\nAndroid Studio / Xcode' },
       {
         type: 'features',
-        content: 'Cross-platform\nOffline mode\nPush notifications',
+        content:
+          'Cross-platform native performance\nOffline-first architecture\nPush notifications',
       },
     ],
   },
@@ -100,19 +203,40 @@ export const TEMPLATES: Template[] = [
       {
         type: 'badges',
         content:
-          'https://img.shields.io/badge/license-MIT-blue.svg\nhttps://img.shields.io/badge/PRs-welcome-brightgreen.svg',
+          'https://img.shields.io/badge/license-MIT-blue.svg\nhttps://img.shields.io/badge/PRs-welcome-brightgreen.svg\nhttps://img.shields.io/github/stars/user/repo?style=social',
       },
       {
         type: 'text',
-        content: 'A command line tool that makes your life easier.',
+        content:
+          'A blazing fast command line tool written in Rust that supercharges your workflow.',
       },
-      { type: 'installation', content: 'npm install -g amazing-cli' },
+      { type: 'installation', content: 'cargo install amazing-cli' },
       { type: 'usage', content: 'amazing-cli start --port 8080' },
       {
         type: 'contributing',
         content:
-          'We love contributions! Please read our contributing guidelines.',
+          'We love contributions! Please read our `CONTRIBUTING.md` guidelines before submitting PRs.',
       },
+      {
+        type: 'conduct',
+        content:
+          'Please adhere to our Code of Conduct to ensure a welcoming environment for everyone.',
+      },
+    ],
+  },
+  {
+    id: 'minimal',
+    title: 'Minimal README',
+    description:
+      'A clean, simple starting point for small projects or libraries.',
+    icon: '📝',
+    blocks: [
+      { type: 'heading', content: 'Project Title' },
+      {
+        type: 'text',
+        content: 'A short and concise description of the project.',
+      },
+      { type: 'installation', content: 'npm install' },
     ],
   },
 ];

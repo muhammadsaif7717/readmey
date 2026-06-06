@@ -64,6 +64,12 @@ import {
   Hash,
   ChevronDown,
   Search,
+  Database,
+  Server,
+  ListTree,
+  Play,
+  Key,
+  Cloud,
 } from 'lucide-react';
 import { useReadme } from '@/providers/ReadmeProvider';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -252,6 +258,13 @@ const elements = [
     icon: <Code2 size={13} />,
     items: [
       {
+        label: 'Env Variables',
+        type: 'env-vars',
+        icon: <Key size={14} />,
+        desc: '.env config',
+        keywords: 'environment variables env config secret',
+      },
+      {
         label: 'Code Block',
         type: 'code',
         icon: <Code2 size={14} />,
@@ -299,6 +312,20 @@ const elements = [
     group: 'Media & Assets',
     icon: <ImageIcon size={13} />,
     items: [
+      {
+        label: 'Architecture',
+        type: 'architecture',
+        icon: <Database size={14} />,
+        desc: 'System diagram',
+        keywords: 'architecture diagram system chart',
+      },
+      {
+        label: 'Code Sandbox',
+        type: 'sandbox',
+        icon: <Play size={14} />,
+        desc: 'Live editor',
+        keywords: 'sandbox codesandbox embed stackblitz',
+      },
       {
         label: 'Image',
         type: 'image',
@@ -443,6 +470,20 @@ const elements = [
     group: 'Project Info',
     icon: <Rocket size={13} />,
     items: [
+      {
+        label: 'Prerequisites',
+        type: 'prerequisites',
+        icon: <ListTree size={14} />,
+        desc: 'Requirements',
+        keywords: 'prerequisites requirements needed',
+      },
+      {
+        label: 'Deployment',
+        type: 'deployment',
+        icon: <Cloud size={14} />,
+        desc: 'Deploy guide',
+        keywords: 'deployment deploy server hosting',
+      },
       {
         label: 'Features List',
         type: 'features',
@@ -663,6 +704,13 @@ const elements = [
     icon: <Layers size={13} />,
     items: [
       {
+        label: 'Table of Contents',
+        type: 'toc',
+        icon: <ListTree size={14} />,
+        desc: 'Document outline',
+        keywords: 'toc table of contents outline navigation',
+      },
+      {
         label: 'Horizontal Rule',
         type: 'divider',
         icon: <Layers size={14} />,
@@ -747,6 +795,12 @@ function SidebarItem({
 }
 
 // ─── Main sidebar ────────────────────────────────────────────────────────────
+
+/**
+ * The main sidebar of the editor.
+ * Provides a searchable, categorized list of markdown elements that can be dragged
+ * into the Editor dropzone. Integrated with dnd-kit's useDraggable.
+ */
 export function AppSidebar() {
   const { addBlock } = useReadme();
   const { setOpen, isMobile } = useSidebar();
@@ -796,8 +850,8 @@ export function AppSidebar() {
           </span>
           <span className="font-mono text-[9px] text-zinc-500 dark:text-zinc-700">
             {searchQuery
-              ? `\${filtered.reduce((a, s) => a + s.items.length, 0)} of \${totalElements}`
-              : `\${totalElements} available`}
+              ? `${filtered.reduce((a, s) => a + s.items.length, 0)} of ${totalElements}`
+              : `${totalElements} available`}
           </span>
         </div>
       </div>

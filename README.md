@@ -1,71 +1,60 @@
-# 🚀 GitReadMe Maker: The Ultimate Documentation
+# Readmey - Professional GitHub README Generator
 
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0070f3&height=200&section=header&text=GitReadMe%20Maker&fontSize=70" width="100%" />
+  <img src="https://via.placeholder.com/800x400.png?text=Readmey+Preview" alt="Readmey Preview" />
 </p>
 
-## 📝 Description
-
-This is a **Next.js** powered application designed to bridge the gap between developers and professional documentation. Whether it's a profile or a project, we've got you covered.
-
----
-
-## 📋 Table of Contents
-
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Installation](#-installation)
-- [Development Roadmap](#-development-roadmap)
-- [FAQ](#-faq)
-
----
+Readmey is an advanced, drag-and-drop README.md generator designed to help developers create stunning, professional GitHub profiles and project documentation in minutes. Built with Next.js 15, React 19, and Tailwind CSS.
 
 ## ✨ Features
 
-- [x] **Live Preview:** Real-time Markdown rendering.
-- [x] **Next-Themes:** Support for Dark and Light mode.
-- [x] **One-Click Export:** Download as a `.md` file.
-- [ ] **AI Integration:** Generate README descriptions using LLMs (Coming Soon).
+- **Drag & Drop Editor**: Intuitively arrange over 70+ markdown blocks.
+- **Live Preview**: See your markdown rendered beautifully in real-time.
+- **Dark/Light Mode**: Premium, fully responsive UI designed for all viewing environments.
+- **Rich Component Library**: Includes pre-configured blocks for Badges, Code Snippets, GitHub Stats, Callouts, and more.
+- **Pre-built Templates**: Jumpstart your documentation with tailored templates for Frontend, Backend, Mobile, and Open Source projects.
+- **Instant Export**: Download your finished `README.md` in one click.
 
----
+## 🚀 Quick Start
 
-## 🛠 Tech Stack
+1. **Clone the repository**
 
-| Category     | Technology   | Purpose            |
-| :----------- | :----------- | :----------------- |
-| **Frontend** | Next.js 15   | Core Framework     |
-| **Styling**  | Tailwind CSS | Utility-first UI   |
-| **Icons**    | Simple Icons | Brand & Tech Logos |
-| **Parsing**  | Marked.js    | Markdown to HTML   |
+   ```bash
+   git clone https://github.com/muhammadsaif7717/readmey.git
+   cd readmey
+   ```
 
----
+2. **Install dependencies**
 
-## 🖼️ Media Gallery
+   ```bash
+   npm install
+   ```
 
-### Application Preview
+3. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+   The application will be running at [http://localhost:3000](http://localhost:3000).
 
-<p align="center">
-  <img src="https://via.placeholder.com/600x300/0070f3/FFFFFF?text=Insert+Your+App+GIF+Here" alt="App Demo GIF" />
-  <br>
-  <sub><i>Figure 1: The split-pane editor in action.</i></sub>
-</p>
+## 🛠️ Tech Stack
 
----
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **UI Library**: [React 19](https://react.dev/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Drag & Drop**: [@dnd-kit](https://dndkit.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
 
-## 🚀 Installation
+## 🤝 Contributing
 
-To get started with the source code, run the following commands:
+Contributions are always welcome! If you have ideas for new markdown blocks, templates, or UI improvements:
 
-```bash
-# Clone the repository
-git clone [https://github.com/yourusername/readme-maker.git](https://github.com/yourusername/readme-maker.git)
+1. Fork the project.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
 
-# Navigate into the directory
-cd readme-maker
+## 📝 License
 
-# Install dependencies
-npm install
-
-# Start the dev server
-npm run dev
-```
+Distributed under the MIT License.
